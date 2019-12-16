@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ScanService</string>
+	<string name="scan_switch">Scan switch</string>
+	<string name="prefix">Prefix:</string>
+	<string name="surfix">Suffix:</string>
+	<string name="voice">Voice:</string>
+	<string name="scan_key_setting">Scan key settings:</string>
+	
+	<!-- C5000 Key -->
+	
+	<string name="key_f1">F1 key(keycode = 131)</string>
+	<string name="key_f2">F2 key(keycode = 132)</string>
+	<string name="key_f3">Left/Handle key(keycode = 133)</string>
+	<string name="key_f4">F4 key(keycode = 134)</string>
+	<string name="key_f5">Right key(keycode = 135)</string>
+	<string name="key_f6">F6 key(keycode = 136)</string>
+	<string name="key_f7">F7 key(keycode = 137)</string>
+	
+	<string name="f1">F1 key(keycode = 131)</string>
+	<string name="f2">F2 key(keycode = 132)</string>
+	<string name="f3">F3 key(keycode = 133)</string>
+	<string name="f4">F4 key(keycode = 134)</string>
+	<string name="f5">F5 key(keycode = 135)</string>
+	<string name="f6">F6 key(keycode = 136)</string>
+	<string name="f7">F7 key(keycode = 137)</string>
+	
+	
+	<string name="tab">TAB</string>
+	<string name="space">SPACE</string>
+	<string name="enter">ENTER</string>
+	<string name="none">NONE</string>
+	<string name="other">OTHERS</string>
+	<string name="tabAndEnter">TAB,ENTER</string>
+	<string name="user_char">Input the customized Char</string>
+	
+	<string name="ok">OK</string>
+	<string name="cancel">Cancel</string>
+	<string name="init_fail">Init device fail</string>
+	<string name="init_success">Init device success</string>
+
+</resources>

@@ -1,0 +1,34 @@
+<resources>
+
+    <string name="app_name">ScanService</string>
+	<string name="scan_switch">后台扫描开关</string>
+	<string name="prefix">前缀:</string>
+	<string name="surfix">后缀:</string>
+	<string name="voice">声音:</string>
+	<string name="scan_key_setting">扫描键定义:</string>
+	<string name="f1">F1 按键(keycode = 131)</string>
+	<string name="f2">F2 按键(keycode = 132)</string>
+	<string name="f3">F3 按键(keycode = 133)</string>
+	<string name="left">左侧按键(keycode = 133)</string>
+	<string name="f4">F4 按键(keycode = 134)</string>
+	<string name="handle">手柄按键(keycode = 134)</string>
+	<string name="tips">如果此项手柄设置无效，请通过"左侧按键"这项设置控制手柄按键</string>
+	<string name="f5">F5 按键(keycode = 135)</string>
+	<string name="right">右侧按键(keycode = 135)</string>
+	<string name="f6">F6 按键(keycode = 136)</string>
+	<string name="f7">F7 按键(keycode = 137)</string>
+	
+	<string name="tab">TAB</string>
+	<string name="space">SPACE</string>
+	<string name="enter">ENTER</string>
+	<string name="none">NONE</string>
+	<string name="other">OTHERS</string>
+	<string name="tabAndEnter">TAB,ENTER</string>
+	<string name="user_char">Input the customized Char</string>
+	
+	<string name="ok">确认</string>
+	<string name="cancel">取消</string>
+	<string name="init_fail">打开设备失败</string>
+	<string name="init_success">打开设备成功</string>
+	
+</resources>
