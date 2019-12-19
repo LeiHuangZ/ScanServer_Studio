@@ -168,15 +168,27 @@ public class ScanConfig {
 		editor.commit();
 	}
 
-	public void setGbkFlag(boolean gbkFlag){
+    public void setEncoding(String encoding){
         SharedPreferences shared = context.getSharedPreferences("scanConfig", Context.MODE_PRIVATE);
         Editor editor = shared.edit();
-        editor.putBoolean("GbkFlag", gbkFlag);
+        editor.putString("Encoding", encoding);
+        editor.apply();
+    }
+
+    public String getEncoding(){
+        SharedPreferences shared = context.getSharedPreferences("scanConfig", Context.MODE_PRIVATE);
+        return shared.getString("Encoding", "Shift_JIS");
+    }
+
+	public void setEncodingIndex(int encodingIndex){
+        SharedPreferences shared = context.getSharedPreferences("scanConfig", Context.MODE_PRIVATE);
+        Editor editor = shared.edit();
+        editor.putInt("EncodingIndex", encodingIndex);
         editor.apply();
     }
 	
-    public boolean getGbkFlag(){
+    public int getEncodingIndex(){
         SharedPreferences shared = context.getSharedPreferences("scanConfig", Context.MODE_PRIVATE);
-        return shared.getBoolean("GbkFlag", false);
+        return shared.getInt("EncodingIndex", 2);
     }
 }

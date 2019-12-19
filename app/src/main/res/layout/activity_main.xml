@@ -3,19 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5dp"
-    android:scrollbars="vertical" >
+    android:scrollbars="vertical">
 
     <LinearLayout
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="60dp"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <Switch
                 android:id="@+id/switch_scan"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/NormalFont"
@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/NormalFont"
@@ -112,7 +112,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/NormalFont"
@@ -128,25 +128,29 @@
                 android:text="" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/NormalFont"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/using_gbk" />
+                android:text="@string/character_encoding" />
 
-            <CheckBox
-                android:id="@+id/checkBox_gbk"
-                android:checked="false"
+            <Spinner
+                android:id="@+id/spinner_encoding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="" />
+                android:minWidth="100dp" />
         </LinearLayout>
 
         <View
@@ -167,7 +171,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/corners_background"
             android:orientation="horizontal"
-            android:padding="3dp" >
+            android:padding="3dp">
 
             <TextView
                 style="@style/NormalFont"
@@ -189,7 +193,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/corners_background"
             android:orientation="horizontal"
-            android:padding="3dp" >
+            android:padding="3dp">
 
             <TextView
                 style="@style/NormalFont"
@@ -211,7 +215,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/corners_background"
             android:orientation="horizontal"
-            android:padding="3dp" >
+            android:padding="3dp">
 
             <TextView
                 style="@style/NormalFont"
@@ -232,7 +236,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/corners_background"
             android:orientation="horizontal"
-            android:padding="3dp" >
+            android:padding="3dp">
 
             <TextView
                 style="@style/NormalFont"
@@ -254,7 +258,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/corners_background"
             android:orientation="horizontal"
-            android:padding="3dp" >
+            android:padding="3dp">
 
             <TextView
                 style="@style/NormalFont"
@@ -275,7 +279,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/corners_background"
             android:orientation="horizontal"
-            android:padding="3dp" >
+            android:padding="3dp">
 
             <TextView
                 style="@style/NormalFont"
@@ -296,7 +300,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/corners_background"
             android:orientation="horizontal"
-            android:padding="3dp" >
+            android:padding="3dp">
 
             <TextView
                 style="@style/NormalFont"

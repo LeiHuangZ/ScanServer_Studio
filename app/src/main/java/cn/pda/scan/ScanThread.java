@@ -81,9 +81,15 @@ public class ScanThread extends Thread {
         super.run();
     }
 
-    private void sendMessage(byte[] data, int dataLen, int mode) {
+    private void sendMessage(byte[] dataTemp, int dataLen, int mode) {
         String dataStr = "";
-        if (data != null && dataLen > 0) {
+        byte[] data = new byte[dataLen];
+        if (dataTemp == null){
+            mHandler.sendEmptyMessage(SWITCH_INPUT);
+            return;
+        }
+        System.arraycopy(dataTemp, 0, data, 0, dataLen);
+        if (dataLen > 0) {
             try {
                 dataStr = new String(data, 0, dataLen, StandardCharsets.UTF_8);
             } catch (Exception e) {

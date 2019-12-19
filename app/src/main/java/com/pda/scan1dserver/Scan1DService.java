@@ -61,20 +61,13 @@ public class Scan1DService extends Service {
 				    return;
                 }
 				String data = "";
-				if (scan1dService.scanConfig.getGbkFlag()){
-                    try {
-                        data = new String(dataBytes, 0, dataBytes.length, "GBK");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    data = new String(dataBytes, 0, dataBytes.length, StandardCharsets.UTF_8);
+                String encoding = scan1dService.scanConfig.getEncoding();
+                try {
+                    data = new String(dataBytes, 0, dataBytes.length, encoding);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
-				LogUtils.e(scan1dService.TAG, "prefixStr=" + scan1dService.prefixStr + "++");
-				byte[] surByte = scan1dService.surfixStr.getBytes();
-				LogUtils.e(scan1dService.TAG, "surfixStr=" + Tools.Bytes2HexString(surByte, surByte.length)
-						+ "++ , surfixStrLen = " + scan1dService.surfixStr.length());
-				LogUtils.e(scan1dService.TAG, "data = " + data);
+                data = filter(data);
 				// input prefix
 				if (scan1dService.prefixStr.contains("\t0A0D")) {
 					scan1dService.sendToInput("\t", true);
@@ -95,7 +88,6 @@ public class Scan1DService extends Service {
 				} else {
 					scan1dService.sendToInput(scan1dService.surfixStr, false);
 				}
-//				scan1dService.softInput(data);
 				if (scan1dService.scanConfig.isVoice()) {
 					scan1dService.mSoundPoolMgr.play(1);
 				}
@@ -271,4 +263,22 @@ public class Scan1DService extends Service {
 		}
 	};
 
+    /**
+     * 去除不可见字符
+     */
+    public static String filter(String content) {
+        if (content != null && content.length() > 0) {
+            char[] contentCharArr = content.toCharArray();
+            char[] contentCharArrTem = new char[contentCharArr.length];
+            int j = 0;
+            for (char c : contentCharArr) {
+                if (c >= 0x20 && c != 0x7F) {
+                    contentCharArrTem[j] = c;
+                    j++;
+                }
+            }
+            return new String(contentCharArrTem, 0, j);
+        }
+        return "";
+    }
 }
