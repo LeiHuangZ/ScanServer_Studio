@@ -1,7 +1,9 @@
 package com.pda.scan1dserver;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -54,9 +56,20 @@ public class Scan1DService extends Service {
 			scan1dService.prefixStr = scan1dService.scanConfig.getPrefix();
 			scan1dService.surfixStr = scan1dService.scanConfig.getSurfix();
 			if (msg.what == ScanThread.SCAN) {
-				String data = msg.getData().getString("data");
-
-
+				byte[] dataBytes = msg.getData().getByteArray("dataBytes");
+				if (dataBytes == null){
+				    return;
+                }
+				String data = "";
+				if (scan1dService.scanConfig.getGbkFlag()){
+                    try {
+                        data = new String(dataBytes, 0, dataBytes.length, "GBK");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    data = new String(dataBytes, 0, dataBytes.length, StandardCharsets.UTF_8);
+                }
 				LogUtils.e(scan1dService.TAG, "prefixStr=" + scan1dService.prefixStr + "++");
 				byte[] surByte = scan1dService.surfixStr.getBytes();
 				LogUtils.e(scan1dService.TAG, "surfixStr=" + Tools.Bytes2HexString(surByte, surByte.length)

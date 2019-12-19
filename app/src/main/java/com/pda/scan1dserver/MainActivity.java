@@ -40,6 +40,7 @@ public class MainActivity extends Activity {
 	private Spinner spinnerPrefix;
 	private Spinner spinnerSurfix;
 	private CheckBox checkVoice;
+	private CheckBox checkGbk;
 	private CheckBox checkF1;
 	private CheckBox checkF2;
 	private CheckBox checkF3;
@@ -113,6 +114,7 @@ public class MainActivity extends Activity {
 		spinnerPrefix = (Spinner) findViewById(R.id.spinner_prefix);
 		spinnerSurfix = (Spinner) findViewById(R.id.spinner_surfix);
 		checkVoice = (CheckBox) findViewById(R.id.checkBox_voice);
+		checkGbk = (CheckBox) findViewById(R.id.checkBox_gbk);
 		checkF1 = (CheckBox) findViewById(R.id.checkBox_f1);
 		checkF2 = (CheckBox) findViewById(R.id.checkBox_f2);
 		checkF3 = (CheckBox) findViewById(R.id.checkBox_f3);
@@ -208,6 +210,12 @@ public class MainActivity extends Activity {
 				scanConfig.setVoice(isChecked);
 			}
 		});
+		checkGbk.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                scanConfig.setGbkFlag(isChecked);
+            }
+        });
 
 		// open dev
 		openSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -334,6 +342,7 @@ public class MainActivity extends Activity {
 		checkF6.setChecked(scanConfig.isF6());
 		checkF7.setChecked(scanConfig.isF7());
 		checkVoice.setChecked(scanConfig.isVoice());
+		checkGbk.setChecked(scanConfig.getGbkFlag());
 
 	}
 

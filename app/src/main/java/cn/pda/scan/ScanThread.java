@@ -92,6 +92,7 @@ public class ScanThread extends Thread {
         }
         Bundle bundle = new Bundle();
         bundle.putString("data", dataStr);
+        bundle.putByteArray("dataBytes", data);
         Message msg = new Message();
         msg.what = mode;
         msg.setData(bundle);
