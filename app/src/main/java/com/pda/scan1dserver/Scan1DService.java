@@ -62,27 +62,7 @@ public class Scan1DService extends Service {
 				LogUtils.e(scan1dService.TAG, "surfixStr=" + Tools.Bytes2HexString(surByte, surByte.length)
 						+ "++ , surfixStrLen = " + scan1dService.surfixStr.length());
 				LogUtils.e(scan1dService.TAG, "data = " + data);
-				// input prefix
-				if (scan1dService.prefixStr.contains("\t0A0D")) {
-					scan1dService.sendToInput("\t", true);
-				} else if ("0A0D".equals(scan1dService.prefixStr)) {
-					scan1dService.sendToInput("", true);
-				} else {
-					scan1dService.sendToInput(scan1dService.prefixStr, false);
-				}
-				// input barcode
-				scan1dService.sendToInput(data, false);
-				// input prefix
-				if (scan1dService.surfixStr.contains("\t0A0D")) {
-					scan1dService.sendToInput("\t", true);
-				} else if ("".equals(scan1dService.surfixStr) || scan1dService.surfixStr.length() == 0) {
-					// sendToInput("", fa) ;
-				} else if ("0A0D".startsWith(scan1dService.surfixStr)) {
-					scan1dService.sendToInput("", true);
-				} else {
-					scan1dService.sendToInput(scan1dService.surfixStr, false);
-				}
-//				scan1dService.softInput(data);
+				scan1dService.softInput(data);
 				if (scan1dService.scanConfig.isVoice()) {
 					scan1dService.mSoundPoolMgr.play(1);
 				}
@@ -190,8 +170,17 @@ public class Scan1DService extends Service {
 				} else {
 					instrumentation.sendStringSync(prefixStr);
 				}
+                long startTime = System.currentTimeMillis();
+                LogUtils.e(TAG, "run, startTime:" + startTime);
 				instrumentation.sendStringSync(dataStr1);
-				// input prefix
+//                int[] keyCodeArray = getKeyCodeArray(dataStr1);
+//                for (int keyCode:
+//                     keyCodeArray) {
+//                    instrumentation.sendCharacterSync(keyCode);
+//                }
+                long time = System.currentTimeMillis() - startTime;
+                LogUtils.e(TAG, "run, time:" + time);
+                // input prefix
 				if (surfixStr.contains("\t0A0D")) {
 					instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_TAB);
 					instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
@@ -213,6 +202,132 @@ public class Scan1DService extends Service {
 		toBack.putExtra("enter", enterFlag);
 		sendBroadcast(toBack);
 	}
+
+	private int[] getKeyCodeArray(String data){
+        char[] chars = data.toCharArray();
+	    int[] keycode = new int[chars.length];
+        for (int i = 0; i < chars.length; i++) {
+            keycode[i] = charToKeyCode(chars[i]);
+        }
+        return keycode;
+    }
+
+    private int charToKeyCode(char c){
+	    int keyCode = KeyEvent.KEYCODE_0;
+	    switch (c){
+            case 'A':
+                keyCode = KeyEvent.KEYCODE_A;
+                break;
+            case 'B':
+                keyCode = KeyEvent.KEYCODE_B;
+                break;
+            case 'C':
+                keyCode = KeyEvent.KEYCODE_C;
+                break;
+            case 'D':
+                keyCode = KeyEvent.KEYCODE_D;
+                break;
+            case 'E':
+                keyCode = KeyEvent.KEYCODE_E;
+                break;
+            case 'F':
+                keyCode = KeyEvent.KEYCODE_F;
+                break;
+            case 'G':
+                keyCode = KeyEvent.KEYCODE_G;
+                break;
+            case 'H':
+                keyCode = KeyEvent.KEYCODE_H;
+                break;
+            case 'I':
+                keyCode = KeyEvent.KEYCODE_I;
+                break;
+            case 'J':
+                keyCode = KeyEvent.KEYCODE_J;
+                break;
+            case 'K':
+                keyCode = KeyEvent.KEYCODE_K;
+                break;
+            case 'L':
+                keyCode = KeyEvent.KEYCODE_L;
+                break;
+            case 'M':
+                keyCode = KeyEvent.KEYCODE_M;
+                break;
+            case 'N':
+                keyCode = KeyEvent.KEYCODE_N;
+                break;
+            case 'O':
+                keyCode = KeyEvent.KEYCODE_O;
+                break;
+            case 'P':
+                keyCode = KeyEvent.KEYCODE_P;
+                break;
+            case 'Q':
+                keyCode = KeyEvent.KEYCODE_Q;
+                break;
+            case 'R':
+                keyCode = KeyEvent.KEYCODE_R;
+                break;
+            case 'S':
+                keyCode = KeyEvent.KEYCODE_S;
+                break;
+            case 'T':
+                keyCode = KeyEvent.KEYCODE_T;
+                break;
+            case 'U':
+                keyCode = KeyEvent.KEYCODE_U;
+                break;
+            case 'V':
+                keyCode = KeyEvent.KEYCODE_V;
+                break;
+            case 'W':
+                keyCode = KeyEvent.KEYCODE_W;
+                break;
+            case 'X':
+                keyCode = KeyEvent.KEYCODE_X;
+                break;
+            case 'Y':
+                keyCode = KeyEvent.KEYCODE_Y;
+                break;
+            case 'Z':
+                keyCode = KeyEvent.KEYCODE_Z;
+                break;
+            case '0':
+                keyCode = KeyEvent.KEYCODE_0;
+                break;
+            case '1':
+                keyCode = KeyEvent.KEYCODE_1;
+                break;
+            case '2':
+                keyCode = KeyEvent.KEYCODE_2;
+                break;
+            case '3':
+                keyCode = KeyEvent.KEYCODE_3;
+                break;
+            case '4':
+                keyCode = KeyEvent.KEYCODE_4;
+                break;
+            case '5':
+                keyCode = KeyEvent.KEYCODE_5;
+                break;
+            case '6':
+                keyCode = KeyEvent.KEYCODE_6;
+                break;
+            case '7':
+                keyCode = KeyEvent.KEYCODE_7;
+                break;
+            case '8':
+                keyCode = KeyEvent.KEYCODE_8;
+                break;
+            case '9':
+                keyCode = KeyEvent.KEYCODE_9;
+                break;
+            default:
+                break;
+        }
+        return keyCode;
+    }
 
 	private BroadcastReceiver killReceiver = new BroadcastReceiver() {
 
