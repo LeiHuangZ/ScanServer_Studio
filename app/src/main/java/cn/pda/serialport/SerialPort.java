@@ -36,6 +36,8 @@ public class SerialPort {
     private FileOutputStream mFileOutputStream;
     private volatile boolean mTrigOn = false;
 
+    public SerialPort(){}
+
     public SerialPort(int port, int baudRate) throws SecurityException, IOException {
         mFd = open(port, baudRate);
         if (mFd == null) {
@@ -87,7 +89,7 @@ public class SerialPort {
 
     public void powerScannerOn() {
         scanerpoweron();
-        scannerTrigOff();
+//        scannerTrigOff();
     }
 
     public void powerScannerOff() {
@@ -104,9 +106,9 @@ public class SerialPort {
         mTrigOn = false;
     }
 
-    public boolean scannerTrigState() {
-        return mTrigOn;
-    }
+//    public boolean scannerTrigState() {
+//        return mTrigOn;
+//    }
 
     public void closePort(int port) {
         close(port);

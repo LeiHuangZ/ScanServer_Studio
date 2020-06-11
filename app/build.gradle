@@ -7,8 +7,8 @@ android {
         applicationId "com.pda.scan1dserver"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 8
-        versionName '1.52'
+        versionCode 16
+        versionName '1.66.5600'
     }
 
     buildTypes {
@@ -19,11 +19,30 @@ android {
     }
 
     signingConfigs {
-        debug {
-            storeFile file("hhw.keystore")
+        // BX6000系列系统签名
+        bx6000 {
+            keyAlias 'android'
+            keyPassword 'android'
+            storeFile file('./bx6000.keystore')
             storePassword 'android'
+        }
+        // C5000,BX1000,H947系列系统签名
+        bx1000 {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+            storeFile file('./hhw.keystore')
+            storePassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.bx1000
+        }
+        release {
+            signingConfig signingConfigs.bx1000
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 

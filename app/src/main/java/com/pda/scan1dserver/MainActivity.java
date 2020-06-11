@@ -1,9 +1,5 @@
 package com.pda.scan1dserver;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -30,9 +26,17 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import cn.pda.scan.ScanThread;
 
 public class MainActivity extends Activity {
+
+    private final String TAG = MainActivity.class.getSimpleName();
+
+    public static boolean mIsOpen = false;
 
     private LinearLayout mMainContainer;
     private ScanConfig scanConfig;
@@ -80,6 +84,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_main);
         setTitle(getAppVersionName(this));
         scanConfig = new ScanConfig(this);
@@ -225,6 +233,8 @@ public class MainActivity extends Activity {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                LogUtils.e(TAG, "onCheckedChanged: isChecked = " + isChecked);
+                mIsOpen = isChecked;
                 // open scan
                 if (isChecked) {
                     boolean open = scanConfig.isOpen();
@@ -233,13 +243,16 @@ public class MainActivity extends Activity {
                     }
                     createLoaddingDialog();
                     Intent toService = new Intent(MainActivity.this, Scan1DService.class);
-                    toService.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    toService.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    toService.addFlags(10086);
                     startService(toService);
                 } else {
-                    Intent toKill = new Intent();
-                    toKill.setAction("android.rfid.KILL_SERVER");
-                    toKill.putExtra("kill", true);
-                    sendBroadcast(toKill);
+//                    Intent toKill = new Intent();
+//                    toKill.setAction("android.rfid.KILL_SERVER");
+//                    toKill.putExtra("kill", true);
+//                    sendBroadcast(toKill);
+                    Intent toService = new Intent(MainActivity.this, Scan1DService.class);
+                    stopService(toService);
                 }
                 scanConfig.setOpen(isChecked);
 

@@ -3,6 +3,7 @@ package com.pda.scan1dserver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 
 /***
  * 开机自启动接收者
@@ -20,8 +21,9 @@ public class BootReceiver extends BroadcastReceiver {
 //	            Intent intent1 = new Intent(context, FloatWindow.class);
 //	            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //	            context.startService(intent1);
+				PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("isfirstboot", true).apply();
 				Intent intent2 = new Intent(context, Scan1DService.class);
-				intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent2.addFlags(10086);
 				context.startService(intent2);
 			}
 

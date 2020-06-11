@@ -70,6 +70,8 @@ public class KeyReceiver extends BroadcastReceiver {
 //					context.startService(toService);
 //				}
 					break;
+				default:
+					break;
 			}
 
 		}

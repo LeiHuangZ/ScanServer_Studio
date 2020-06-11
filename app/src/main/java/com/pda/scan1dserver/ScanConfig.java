@@ -177,7 +177,7 @@ public class ScanConfig {
 
     public String getEncoding(){
         SharedPreferences shared = context.getSharedPreferences("scanConfig", Context.MODE_PRIVATE);
-        return shared.getString("Encoding", "Shift_JIS");
+        return shared.getString("Encoding", "UTF-8");
     }
 
 	public void setEncodingIndex(int encodingIndex){
@@ -189,6 +189,6 @@ public class ScanConfig {
 	
     public int getEncodingIndex(){
         SharedPreferences shared = context.getSharedPreferences("scanConfig", Context.MODE_PRIVATE);
-        return shared.getInt("EncodingIndex", 2);
+        return shared.getInt("EncodingIndex", 0);
     }
 }
