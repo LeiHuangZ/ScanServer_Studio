@@ -5,6 +5,7 @@
 	<string name="prefix">前缀:</string>
 	<string name="surfix">后缀:</string>
 	<string name="voice">声音:</string>
+	<string name="filter">过滤不可见字符:</string>
     <string name="character_encoding">字符编码:</string>
     <string name="scan_key_setting">扫描键定义:</string>
 	<string name="f1">F1 按键(keycode = 131)</string>

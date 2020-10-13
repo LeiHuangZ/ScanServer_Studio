@@ -107,8 +107,6 @@ public class Scan1DService extends Service {
     public void onCreate() {
         LogUtils.e(TAG, "onCreate");
 
-        MainActivity.mIsOpen = new ScanConfig(this).isOpen();
-
         scanConfig = new ScanConfig(this);
         mSoundPoolMgr = SoundPoolMgr.getInstance(this);
 //        IntentFilter filter = new IntentFilter();
@@ -133,7 +131,7 @@ public class Scan1DService extends Service {
         builder.setWhen(System.currentTimeMillis()); // 设置该通知发生的时间
 
         Notification notification = builder.build(); // 获取构建好的Notification
-        notification.defaults = Notification.DEFAULT_SOUND; //设置为默认的声音
+//        notification.defaults = Notification.DEFAULT_SOUND; //设置为默认的声音
         // 参数一：唯一的通知标识；参数二：通知消息。
         startForeground(110, notification);// 开始前台服务
         super.onCreate();
@@ -164,19 +162,9 @@ public class Scan1DService extends Service {
         if (intent == null || intent.getFlags() == Intent.FLAG_ACTIVITY_NEW_TASK || intent.getFlags() == 10086) {
             if (scan == null) {
                 try {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                scan = new ScanThread(mHandler);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                EventBus.getDefault().post(MainActivity.FLAG_OPEN_FAIL);
-                            }
-//                            scan.start();
-                            LogUtils.e(TAG, "onStartCommand: init finished");
-                        }
-                    }).start();
+                    scan = new ScanThread(mHandler);
+                            scan.start();
+                    LogUtils.e(TAG, "onStartCommand: init finished");
                 } catch (Exception e) {
                     e.printStackTrace();
                     EventBus.getDefault().post(MainActivity.FLAG_OPEN_FAIL);
@@ -184,6 +172,7 @@ public class Scan1DService extends Service {
             }
             return Service.START_STICKY;
         }
+
         boolean keyDown = intent.getBooleanExtra("keyDown", false);
         LogUtils.i(TAG, "onStartCommand >>>>>> keyDown = " + keyDown);
         LogUtils.i(TAG, "onStartCommand >>>>>> isRunning = " + isRuning);
@@ -193,7 +182,7 @@ public class Scan1DService extends Service {
             if (scan == null) {
                 try {
                     scan = new ScanThread(mHandler);
-//                    scan.start();
+                    scan.start();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -288,9 +277,9 @@ public class Scan1DService extends Service {
                 try {
                     if (scan == null) {
                         scan = new ScanThread(mHandler);
-//                        scan.start();
+                        scan.start();
                     }
-                } catch (SecurityException | IOException e) {
+                } catch (SecurityException | IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
 //                Scan1DService.this.onStartCommand(null, -1, 0);
@@ -320,18 +309,22 @@ public class Scan1DService extends Service {
     /**
      * 去除不可见字符
      */
-    public static String filter(String content) {
-        if (content != null && content.length() > 0) {
-            char[] contentCharArr = content.toCharArray();
-            char[] contentCharArrTem = new char[contentCharArr.length];
-            int j = 0;
-            for (char c : contentCharArr) {
-                if (c >= 0x20 && c != 0x7F) {
-                    contentCharArrTem[j] = c;
-                    j++;
+    public String filter(String content) {
+        if (scanConfig.isFilter()) {
+            if (content != null && content.length() > 0) {
+                char[] contentCharArr = content.toCharArray();
+                char[] contentCharArrTem = new char[contentCharArr.length];
+                int j = 0;
+                for (char c : contentCharArr) {
+                    if (c >= 0x20 && c != 0x7F) {
+                        contentCharArrTem[j] = c;
+                        j++;
+                    }
                 }
+                return new String(contentCharArrTem, 0, j);
             }
-            return new String(contentCharArrTem, 0, j);
+        } else {
+            return content;
         }
         return "";
     }

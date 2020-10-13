@@ -36,8 +36,6 @@ public class MainActivity extends Activity {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
-    public static boolean mIsOpen = false;
-
     private LinearLayout mMainContainer;
     private ScanConfig scanConfig;
     private Switch openSwitch;
@@ -45,6 +43,7 @@ public class MainActivity extends Activity {
     private Spinner spinnerSurfix;
     private Spinner spinnerEnconding;
     private CheckBox checkVoice;
+    private CheckBox checkFilter;
     private CheckBox checkF1;
     private CheckBox checkF2;
     private CheckBox checkF3;
@@ -129,6 +128,7 @@ public class MainActivity extends Activity {
         spinnerSurfix = (Spinner) findViewById(R.id.spinner_surfix);
         spinnerEnconding = (Spinner) findViewById(R.id.spinner_encoding);
         checkVoice = (CheckBox) findViewById(R.id.checkBox_voice);
+        checkFilter = (CheckBox) findViewById(R.id.checkBox_filter);
         checkF1 = (CheckBox) findViewById(R.id.checkBox_f1);
         checkF2 = (CheckBox) findViewById(R.id.checkBox_f2);
         checkF3 = (CheckBox) findViewById(R.id.checkBox_f3);
@@ -227,6 +227,13 @@ public class MainActivity extends Activity {
                 scanConfig.setVoice(isChecked);
             }
         });
+        checkFilter.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                scanConfig.setFilter(isChecked);
+            }
+        });
 
         // open dev
         openSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -234,7 +241,7 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LogUtils.e(TAG, "onCheckedChanged: isChecked = " + isChecked);
-                mIsOpen = isChecked;
+                BaseApplication.mIsOpen = isChecked;
                 // open scan
                 if (isChecked) {
                     boolean open = scanConfig.isOpen();
@@ -387,6 +394,7 @@ public class MainActivity extends Activity {
         checkF6.setChecked(scanConfig.isF6());
         checkF7.setChecked(scanConfig.isF7());
         checkVoice.setChecked(scanConfig.isVoice());
+        checkFilter.setChecked(scanConfig.isFilter());
 
     }
 
@@ -420,6 +428,7 @@ public class MainActivity extends Activity {
             showToast(getString(R.string.init_success));
         } else if (FLAG_OPEN_FAIL.equals(result)) {
             showToast(getString(R.string.init_success));
+            BaseApplication.mIsOpen = false;
         }
         dialogLoading.cancel();
     }

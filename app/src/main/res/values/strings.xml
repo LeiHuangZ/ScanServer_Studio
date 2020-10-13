@@ -6,6 +6,7 @@
 	<string name="prefix">Prefix:</string>
 	<string name="surfix">Suffix:</string>
 	<string name="voice">Voice:</string>
+	<string name="filter">Filter invisible characters:</string>
 	<string name="character_encoding">Character encoding:</string>
 	<string name="scan_key_setting">Scan key settings:</string>
 	

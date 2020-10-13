@@ -7,8 +7,8 @@ android {
         applicationId "com.pda.scan1dserver"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 16
-        versionName '1.66.5600'
+        versionCode 18
+        versionName '1.8'
     }
 
     buildTypes {

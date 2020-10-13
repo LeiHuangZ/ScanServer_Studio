@@ -1,23 +1,24 @@
 package cn.pda.scan;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
-import com.pda.scan1dserver.LogUtils;
+import com.pda.scan1dserver.BaseApplication;
 import com.pda.scan1dserver.MainActivity;
-import com.pda.scan1dserver.ScanConfig;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import cn.pda.serialport.SerialPort;
 
@@ -26,61 +27,49 @@ import cn.pda.serialport.SerialPort;
  */
 public class ScanThread extends Thread {
 
-    private final String TAG = "Huang," + ScanThread.class.getSimpleName();
+    private final String TAG = ScanThread.class.getSimpleName();
 
-//    private ThreadFactory threadFactory = Executors.defaultThreadFactory();
-//    private ExecutorService mExecutorService;
-
-    private Timer mTimer = null;
-    private TimerTask mTimerTask = null;
+    private ThreadFactory threadFactory = Executors.defaultThreadFactory();
+    //    private ExecutorService mExecutorService;
+    private ScheduledExecutorService mScheduledExecutorService;
 
     private SerialPort mSerialPort;
     public static int port = 0;
     private InputStream is;
     private OutputStream os;
 
-    private Handler mHandler;
-
-    private boolean mCancelFlag = true;
-
     private volatile boolean mRunFlag;
 
     public static int SCAN = 1001;
     public static int SWITCH_INPUT = 1002;
 
-    private int mCount = 0;
+    private Handler mHandler;
+
+    private int mDecodeTimeout = 3000;
 
     /**
      * if throw exception, serialport initialize fail.
      */
-    public ScanThread(Handler handler) throws SecurityException, IOException {
-        mHandler = handler;
+    public ScanThread(Handler handler) throws SecurityException, IOException, InterruptedException {
         int baudRate = 9600;
 //        try {
 //            Thread.sleep(450);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        new SerialPort().scannerTrigOn();
+//        new SerialPort().scannerTrigOn();
 //        try {
 //            Thread.sleep(450);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
         new SerialPort().powerScannerOn();
-        try {
-            Thread.sleep(1300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         mSerialPort = new SerialPort(port, baudRate);
+        Thread.sleep(100);
         is = mSerialPort.getInputStream();
         os = mSerialPort.getOutputStream();
-        byte[] buffer = new byte[128];
-        int read = is.read(buffer);
-        LogUtils.e(TAG, "ScanThread read: " + read);
         mSerialPort.scannerTrigOff();
-        this.start();
+        mHandler = handler;
     }
 
     @Override
@@ -88,35 +77,25 @@ public class ScanThread extends Thread {
         try {
             mRunFlag = true;
             EventBus.getDefault().post(MainActivity.FLAG_OPEN_SUCCESS);
-            LogUtils.e(TAG, "ScanThread run");
-            byte[] buffer = new byte[4096];
-            int available;
-            int size;
+            Log.e(TAG, "ScanThread run");
             while (!isInterrupted() && mRunFlag) {
-                LogUtils.e(TAG, "run: mIsOpen = " + MainActivity.mIsOpen);
-                if (!MainActivity.mIsOpen) {
+                if (!BaseApplication.mIsOpen) {
                     return;
                 }
+                int size;
+                byte[] buffer = new byte[4096];
+                int available;
                 available = is.available();
                 if (available > 0) {
                     size = is.read(buffer);
                     if (size > 0) {
                         stopScan();
-                        LogUtils.e(TAG, "mCancelScanTask switch input");
-                        mCount = 0;
-                        mCancelFlag = false;
-                        stopTimer();
                         sendMessage(buffer, size, SCAN);
                     }
                 }
-                LogUtils.e(TAG, "run: ");
-                try {
-                    Thread.sleep(30);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                Thread.sleep(10);
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         super.run();
@@ -175,102 +154,86 @@ public class ScanThread extends Thread {
 //            os.write(Tools.HexString2Bytes("04A30400FF55"));
 //            mSerialPort.scannerTrigOff();
             mSerialPort.scannerTrigOn();
-            LogUtils.e(TAG, "scan: ");
-            if (mTimer == null) {
-                mTimer = new Timer();
-            }
-            mCount = 0;
-            if (mTimerTask == null) {
-                mTimerTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        LogUtils.i(TAG, "mCancelScanTask count: ");
-//                        do {
-                            LogUtils.i(TAG, "mCancelScanTask sleep(1000)... count = " + mCount);
-//                        } while (mCancelFlag);
-                        if (mCount == 6) {
-                            stopScan();
-                            LogUtils.e(TAG, "mCancelScanTask switch input");
-                            sendMessage(null, 0, SWITCH_INPUT);
-                            mCount = 0;
-                            mCancelFlag = false;
-                            stopTimer();
-                        }
-                        mCount++;
-                    }
-                };
-            }
-
-            if (mTimer != null && mTimerTask != null) {
-                mTimer.schedule(mTimerTask, 0, 500);
-            }
+            Log.d(TAG, "[scan] TrigOn");
 //            mExecutorService = new ThreadPoolExecutor(1, 200, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(1024), threadFactory, new ThreadPoolExecutor.AbortPolicy());
+            mScheduledExecutorService = new ScheduledThreadPoolExecutor(3, threadFactory);
             mCancelFlag = true;
 //            mExecutorService.submit(mCancelScanTask);
+            mScheduledExecutorService.schedule(mCancelScanSchedule, mDecodeTimeout, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void stopTimer() {
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer = null;
+    private boolean mCancelFlag = true;
+    private Runnable mCancelScanTask = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                int loopCount = 0;
+                do {
+                    if (!mCancelFlag) {
+                        return;
+                    }
+                    Log.e(TAG, "run: ");
+                    Thread.sleep(1);
+                    loopCount++;
+                } while (loopCount < mDecodeTimeout);
+//                if (mSerialPort.scannerTrigState()) {
+                stopScan();
+                Log.e(TAG, "mCancelScanTask switch input");
+//                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        if (mTimerTask != null) {
-            mTimerTask.cancel();
-            mTimerTask = null;
+    };
+
+    private Runnable mCancelScanSchedule = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                stopScan();
+                Log.e(TAG, "mCancelScanTask switch input");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        LogUtils.e(TAG, "stopTimer: ");
-    }
-//    private Runnable mCancelScanTask = new Runnable() {
-//        @Override
-//        public void run() {
-//            try {
-//                int loopCount = 0;
-//                do {
-//                    if (!mCancelFlag) {
-//                        return;
-//                    }
-////                    LogUtils.e(TAG, "run: ");
-//                    Thread.sleep(1);
-//                    loopCount++;
-//                } while (loopCount < 2600);
-////                if (mSerialPort.scannerTrigState()) {
-//                stopScan();
-//                LogUtils.e(TAG, "mCancelScanTask switch input");
-//                sendMessage(null, 0, SWITCH_INPUT);
-////                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                sendMessage(null, 0, SWITCH_INPUT);
-//            }
-//        }
-//    };
+    };
 
     public void stopScan() {
 //        if (mSerialPort.scannerTrigState()) {
         mSerialPort.scannerTrigOff();
 //        }
 //        if (mExecutorService != null) {
-        mCancelFlag = false;
-//        stopTimer();
+//            mCancelFlag = false;
 //            mExecutorService.shutdownNow();
 //            mExecutorService = null;
-        LogUtils.e(TAG, "stopScan: ");
+//            Log.e(TAG, "stopScan: ");
 //        }
+        if (mScheduledExecutorService != null) {
+            mCancelFlag = false;
+            mScheduledExecutorService.shutdownNow();
+            mScheduledExecutorService = null;
+            Log.e(TAG, "stopScan: ");
+        }
+        mHandler.sendEmptyMessage(SWITCH_INPUT);
     }
 
     public void close() {
-        stopScan();
+//        stopScan();
 //        if (mExecutorService != null) {
-        mCancelFlag = false;
-        stopTimer();
-        sendMessage(null, 0, SWITCH_INPUT);
+//            mCancelFlag = false;
 //            mExecutorService.shutdownNow();
 //            mExecutorService = null;
-        LogUtils.e(TAG, "close stopScan: ");
+//            Log.e(TAG, "stopScan: ");
 //        }
+        if (mScheduledExecutorService != null) {
+            mCancelFlag = false;
+            mScheduledExecutorService.shutdownNow();
+            mScheduledExecutorService = null;
+            Log.e(TAG, "stopScan: ");
+        }
         mRunFlag = false;
         if (mSerialPort != null) {
             mSerialPort.powerScannerOff();
@@ -285,11 +248,11 @@ public class ScanThread extends Thread {
                 e.printStackTrace();
             }
             mSerialPort.closePort(port);
-            try {
-                new SerialPort(11, 115200);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                new SerialPort(11, 115200);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 

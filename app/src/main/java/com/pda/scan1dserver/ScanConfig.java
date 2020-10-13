@@ -84,6 +84,18 @@ public class ScanConfig {
 		editor.commit();
 	}
 
+	public boolean isFilter() {
+		SharedPreferences shared = context.getSharedPreferences("scanConfig", Context.MODE_PRIVATE);
+		return shared.getBoolean("filter", false);
+	}
+
+	public void setFilter(boolean filter) {
+		SharedPreferences shared = context.getSharedPreferences("scanConfig", Context.MODE_PRIVATE);
+		Editor editor = shared.edit();
+		editor.putBoolean("filter", filter);
+		editor.commit();
+	}
+
 	public boolean isF1() {
 		SharedPreferences shared = context.getSharedPreferences("scanConfig", Context.MODE_PRIVATE);
 		return shared.getBoolean("f1", true);
